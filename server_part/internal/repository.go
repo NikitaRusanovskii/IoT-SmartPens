@@ -42,14 +42,15 @@ func (c *ConnectionManager) GetPool() (*pgxpool.Pool, error) {
 
 // --------------------------------------------------------------------------------------------------------------------
 
-// General Functions --------------------------------------------------------------------------------------------------
+// Student & Teacher Managers General Functions -----------------------------------------------------------------------
+
 type tableConfig struct {
 	table       string
 	id_name     string
 	oth_id_name string
 }
 
-// TO DO: protection from SQL injection
+// TO DO: protection from SQL injection (use pgx.Identifier{...}.Sanitize())
 
 func insertFunctional(ctx context.Context, db *pgxpool.Pool,
 	id uuid.UUID, fio Fio, other_id int, tc tableConfig) error {
@@ -70,12 +71,32 @@ func getByIDFunctional(ctx context.Context, db *pgxpool.Pool, id uuid.UUID, tc t
 	query := fmt.Sprintf(`SELECT %s, fname, mname, lname, %s FROM %s WHERE %s = $1`, tc.id_name, tc.oth_id_name, tc.table, tc.id_name)
 	return db.QueryRow(ctx, query, id)
 }
-func deleteByIDFunctional(ctx context.Context, db *pgxpool.Pool, id uuid.UUID, tc tableConfig) error {
+func deleteByIDFunctionalST(ctx context.Context, db *pgxpool.Pool, id uuid.UUID, tc tableConfig) error {
 	query := fmt.Sprintf(`DELETE FROM %s WHERE %s = $1`, tc.table, tc.id_name)
 	_, err := db.Exec(ctx, query, id)
 	return err
 }
-func existsByIDFunctional(ctx context.Context, db *pgxpool.Pool, id uuid.UUID, tc tableConfig) (bool, error) {
+func existsByIDFunctionalST(ctx context.Context, db *pgxpool.Pool, id uuid.UUID, tc tableConfig) (bool, error) {
+	query := fmt.Sprintf(`SELECT EXISTS(SELECT 1 FROM %s WHERE %s = $1)`, tc.table, tc.id_name)
+	var exists bool
+	res := db.QueryRow(ctx, query, id)
+	err := res.Scan(&exists)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		return false, errors.New(err.Error())
+	}
+	return exists, nil
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// Work & Lesson Managers General Functions ---------------------------------------------------------------------------
+
+func deleteByIDFunctionalWL(ctx context.Context, db *pgxpool.Pool, id int, tc tableConfig) error {
+	query := fmt.Sprintf(`DELETE FROM %s WHERE %s = $1`, tc.table, tc.id_name)
+	_, err := db.Exec(ctx, query, id)
+	return err
+}
+func existsByIDFunctionalWL(ctx context.Context, db *pgxpool.Pool, id int, tc tableConfig) (bool, error) {
 	query := fmt.Sprintf(`SELECT EXISTS(SELECT 1 FROM %s WHERE %s = $1)`, tc.table, tc.id_name)
 	var exists bool
 	res := db.QueryRow(ctx, query, id)
@@ -120,10 +141,10 @@ func (m *StudentManager) GetByID(ctx context.Context, id uuid.UUID) (*Student, e
 	return stud, nil
 }
 func (m *StudentManager) DeleteByID(ctx context.Context, id uuid.UUID) error {
-	return deleteByIDFunctional(ctx, m.db, id, studentsTableConfig)
+	return deleteByIDFunctionalST(ctx, m.db, id, studentsTableConfig)
 }
 func (m *StudentManager) ExistsByID(ctx context.Context, id uuid.UUID) (bool, error) {
-	return existsByIDFunctional(ctx, m.db, id, studentsTableConfig)
+	return existsByIDFunctionalST(ctx, m.db, id, studentsTableConfig)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -160,10 +181,119 @@ func (m *TeacherManager) GetByID(ctx context.Context, id uuid.UUID) (*Teacher, e
 	return teac, nil
 }
 func (m *TeacherManager) DeleteByID(ctx context.Context, id uuid.UUID) error {
-	return deleteByIDFunctional(ctx, m.db, id, teachersTableConfig)
+	return deleteByIDFunctionalST(ctx, m.db, id, teachersTableConfig)
 }
 func (m *TeacherManager) ExistsByID(ctx context.Context, id uuid.UUID) (bool, error) {
-	return existsByIDFunctional(ctx, m.db, id, teachersTableConfig)
+	return existsByIDFunctionalST(ctx, m.db, id, teachersTableConfig)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// Work Manager -------------------------------------------------------------------------------------------------------
+
+type WorkManager struct {
+	db *pgxpool.Pool
+}
+
+func NewWorkManager(db *pgxpool.Pool) (*WorkManager, error) {
+	if db == nil {
+		return nil, errors.New("db pgxpool.Pool is nil. NewWorkManager()")
+	}
+	return &WorkManager{db: db}, nil
+}
+
+// Used only for Exist and Delete
+var worksTableConfig = tableConfig{
+	table:       "works",
+	id_name:     "work_id",
+	oth_id_name: "",
+}
+
+func (m *WorkManager) Insert(ctx context.Context, work Work) error {
+	query := `
+        INSERT INTO works (work_id, lesson_id, student_id, data, mark)
+        VALUES ($1, $2, $3, $4, $5)
+        ON CONFLICT (work_id)
+        DO UPDATE SET
+            lesson_id = EXCLUDED.lesson_id,
+            student_id = EXCLUDED.student_id,
+            data = EXCLUDED.data,
+            mark = EXCLUDED.mark
+    `
+	_, err := m.db.Exec(ctx, query, work.WorkID, work.LessonID, work.StudentID, work.Data, work.Mark)
+	return err
+}
+
+func (m *WorkManager) GetByID(ctx context.Context, id int) (*Work, error) {
+	query := `SELECT work_id, lesson_id, student_id, data, mark FROM works WHERE work_id = $1`
+	res := m.db.QueryRow(ctx, query, id)
+	work := &Work{}
+	err := res.Scan(&work.WorkID, &work.LessonID, &work.StudentID, &work.Data, &work.Mark)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, errors.New("Unknown work_id")
+	}
+	return work, nil
+}
+func (m *WorkManager) DeleteByID(ctx context.Context, id int) error {
+	return deleteByIDFunctionalWL(ctx, m.db, id, worksTableConfig)
+}
+func (m *WorkManager) ExistsByID(ctx context.Context, id int) (bool, error) {
+	return existsByIDFunctionalWL(ctx, m.db, id, worksTableConfig)
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// Lesson Manager -----------------------------------------------------------------------------------------------------
+
+type LessonManager struct {
+	db *pgxpool.Pool
+}
+
+func NewLessonManager(db *pgxpool.Pool) (*LessonManager, error) {
+	if db == nil {
+		return nil, errors.New("db pgxpool.Pool is nil. NewLessonManager()")
+	}
+	return &LessonManager{db: db}, nil
+}
+
+// Used only for Exist and Delete
+var lessonsTableConfig = tableConfig{
+	table:       "lessons",
+	id_name:     "lesson_id",
+	oth_id_name: "",
+}
+
+func (m *LessonManager) Insert(ctx context.Context, less Lesson) error {
+	query := `
+        INSERT INTO lessons (lesson_id, teacher_id, date, group_id, subject_id, room)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        ON CONFLICT (lesson_id)
+        DO UPDATE SET
+            teacher_id = EXCLUDED.teacher_id,
+            date = EXCLUDED.date,
+            group_id = EXCLUDED.group_id,
+            subject_id = EXCLUDED.subject_id
+			room = EXCLUDED.room
+    `
+	_, err := m.db.Exec(ctx, query, less.LessonID, less.TeacherID, less.Date, less.GroupID, less.SubjectID, less.Room)
+	return err
+}
+
+func (m *LessonManager) GetByID(ctx context.Context, id int) (*Lesson, error) {
+	query := `SELECT lesson_id, teacher_id, date, group_id, subject_id, room FROM lessons WHERE lesson_id = $1`
+	res := m.db.QueryRow(ctx, query, id)
+	less := &Lesson{}
+	err := res.Scan(&less.LessonID, &less.TeacherID, &less.Date, &less.GroupID, &less.SubjectID, &less.Room)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return nil, errors.New("Unknown lesson_id")
+	}
+	return less, nil
+}
+func (m *LessonManager) DeleteByID(ctx context.Context, id int) error {
+	return deleteByIDFunctionalWL(ctx, m.db, id, lessonsTableConfig)
+}
+func (m *LessonManager) ExistsByID(ctx context.Context, id int) (bool, error) {
+	return existsByIDFunctionalWL(ctx, m.db, id, lessonsTableConfig)
 }
 
 // --------------------------------------------------------------------------------------------------------------------
