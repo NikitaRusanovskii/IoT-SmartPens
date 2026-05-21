@@ -6,18 +6,26 @@ import (
 	"github.com/google/uuid"
 )
 
+// FIO struct ---------------------------------------------------------------------------------------------------------
+
+type Fio struct {
+	FirstName  string `db:"fname"`
+	MiddleName string `db:"mname"`
+	LastName   string `db:"lname"`
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
 // Student ------------------------------------------------------------------------------------------------------------
 
 type Student struct {
-	StudentID  uuid.UUID `db:"student_id"`
-	FirstName  string    `db:"fname"`
-	MiddleName string    `db:"mname"`
-	LastName   string    `db:"lname"`
-	GroupID    int       `db:"group_id"`
+	StudentID uuid.UUID `db:"student_id"`
+	FIO       Fio
+	GroupID   int `db:"group_id"`
 }
 
 func NewStudent(Id uuid.UUID, fn string, mn string, ln string, gi int) Student {
-	return Student{Id, fn, mn, ln, gi}
+	return Student{Id, Fio{fn, mn, ln}, gi}
 }
 func (s *Student) SetGroup(ng int) {
 	s.GroupID = ng
@@ -28,15 +36,13 @@ func (s *Student) SetGroup(ng int) {
 // Teacher ------------------------------------------------------------------------------------------------------------
 
 type Teacher struct {
-	StudentID  uuid.UUID `db:"teacher_id"`
-	FirstName  string    `db:"fname"`
-	MiddleName string    `db:"mname"`
-	LastName   string    `db:"lname"`
-	SubjectID  int       `db:"subject_id"`
+	TeacherID uuid.UUID `db:"teacher_id"`
+	FIO       Fio
+	SubjectID int `db:"subject_id"`
 }
 
 func NewTeacher(Id uuid.UUID, fn string, mn string, ln string, si int) Teacher {
-	return Teacher{Id, fn, mn, ln, si}
+	return Teacher{Id, Fio{fn, mn, ln}, si}
 }
 func (t *Teacher) SetSubject(ns int) {
 	t.SubjectID = ns
