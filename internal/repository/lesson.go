@@ -30,7 +30,7 @@ func (r *LessonRepository) Create(
 ) error {
 
 	query := `
-		INSERT INTO lessons (
+		INSERT INTO lesson (
 			teacher_id,
 			group_id,
 			subject_id,
@@ -65,7 +65,7 @@ func (r *LessonRepository) GetByID(
 			subject_id,
 			room,
 			date
-		FROM lessons
+		FROM lesson
 		WHERE id = $1
 	`
 
@@ -101,7 +101,7 @@ func (r *LessonRepository) Delete(
 ) error {
 
 	query := `
-		DELETE FROM lessons
+		DELETE FROM lesson
 		WHERE id = $1
 	`
 
@@ -134,7 +134,7 @@ func (r *LessonRepository) List(
 			subject_id,
 			room,
 			date
-		FROM lessons
+		FROM lesson
 		ORDER BY date
 	`
 

@@ -12,6 +12,12 @@ type LearningService struct {
 	lessonDB *repository.LessonRepository
 }
 
+func NewLearningService(workRepo *repository.WorkRepository, lessonRepo *repository.LessonRepository) *LearningService {
+	return &LearningService{
+		workDB:   workRepo,
+		lessonDB: lessonRepo,
+	}
+}
 func (l *LearningService) Delete(ctx context.Context, lessonID int, studentID int) error {
 	err := l.workDB.Delete(ctx, lessonID, studentID)
 	return err

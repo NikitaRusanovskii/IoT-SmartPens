@@ -12,7 +12,7 @@ func GenerateDataFromStudentsPen(lessonID int,
 		var points domain.PointList
 		startPosition := [3]int8{10, 20, 30}
 		points = append(points, startPosition)
-		for range 999 {
+		for range 3 {
 			currentPosition := [3]int8{int8(rand.IntN(3) - 1),
 				int8(rand.IntN(3) - 1),
 				int8(rand.IntN(3) - 1)}

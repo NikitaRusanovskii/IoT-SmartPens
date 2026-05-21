@@ -30,7 +30,7 @@ func (r *WorkRepository) Create(
 ) error {
 
 	query := `
-		INSERT INTO works (
+		INSERT INTO work (
 			lesson_id,
 			student_id,
 			data
@@ -60,7 +60,7 @@ func (r *WorkRepository) GetByLessonAndStudent(
 			lesson_id,
 			student_id,
 			data
-		FROM works
+		FROM work
 		WHERE lesson_id = $1
 		  AND student_id = $2
 	`
@@ -99,7 +99,7 @@ func (r *WorkRepository) GetByLesson(
 			lesson_id,
 			student_id,
 			data
-		FROM works
+		FROM work
 		WHERE lesson_id = $1
 	`
 
@@ -140,7 +140,7 @@ func (r *WorkRepository) Delete(
 ) error {
 
 	query := `
-		DELETE FROM works
+		DELETE FROM work
 		WHERE lesson_id = $1
 		  AND student_id = $2
 	`
