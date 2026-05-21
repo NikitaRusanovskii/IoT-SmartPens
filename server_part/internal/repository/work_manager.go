@@ -31,16 +31,10 @@ var worksTableConfig = tableConfig{
 
 func (m *WorkManager) Insert(ctx context.Context, work domain.Work) error {
 	query := `
-        INSERT INTO works (work_id, lesson_id, student_id, data, mark)
-        VALUES ($1, $2, $3, $4, $5)
-        ON CONFLICT (work_id)
-        DO UPDATE SET
-            lesson_id = EXCLUDED.lesson_id,
-            student_id = EXCLUDED.student_id,
-            data = EXCLUDED.data,
-            mark = EXCLUDED.mark
+        INSERT INTO works (lesson_id, student_id, data, mark)
+        VALUES ($1, $2, $3, $4)
     `
-	_, err := m.db.Exec(ctx, query, work.WorkID, work.LessonID, work.StudentID, work.Data, work.Mark)
+	_, err := m.db.Exec(ctx, query, work.LessonID, work.StudentID, work.Data, work.Mark)
 	return err
 }
 

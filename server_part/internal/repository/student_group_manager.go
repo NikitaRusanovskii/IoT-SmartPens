@@ -30,13 +30,10 @@ var studentGroupsTableConfig = tableConfig{
 
 func (m *StudentGroupManager) Insert(ctx context.Context, group domain.StudentGroup) error {
 	query := `
-        INSERT INTO student_groups (group_id, name)
-        VALUES ($1, $2)
-        ON CONFLICT (group_id)
-        DO UPDATE SET
-            name = EXCLUDED.name
+        INSERT INTO student_groups (name)
+        VALUES ($1)
     `
-	_, err := m.db.Exec(ctx, query, group.GroupID, group.Name)
+	_, err := m.db.Exec(ctx, query, group.Name)
 	return err
 }
 

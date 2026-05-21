@@ -31,17 +31,10 @@ var lessonsTableConfig = tableConfig{
 
 func (m *LessonManager) Insert(ctx context.Context, less domain.Lesson) error {
 	query := `
-        INSERT INTO lessons (lesson_id, teacher_id, date, group_id, subject_id, room)
-        VALUES ($1, $2, $3, $4, $5, $6)
-        ON CONFLICT (lesson_id)
-        DO UPDATE SET
-            teacher_id = EXCLUDED.teacher_id,
-            date = EXCLUDED.date,
-            group_id = EXCLUDED.group_id,
-            subject_id = EXCLUDED.subject_id
-			room = EXCLUDED.room
+        INSERT INTO lessons (teacher_id, date, group_id, subject_id, room)
+        VALUES ($1, $2, $3, $4, $5)
     `
-	_, err := m.db.Exec(ctx, query, less.LessonID, less.TeacherID, less.Date, less.GroupID, less.SubjectID, less.Room)
+	_, err := m.db.Exec(ctx, query, less.TeacherID, less.Date, less.GroupID, less.SubjectID, less.Room)
 	return err
 }
 

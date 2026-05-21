@@ -30,13 +30,10 @@ var subjectsTableConfig = tableConfig{
 
 func (m *SubjectManager) Insert(ctx context.Context, subject domain.Subject) error {
 	query := `
-        INSERT INTO subjects (subject_id, name)
-        VALUES ($1, $2)
-        ON CONFLICT (subject_id)
-        DO UPDATE SET
-            name = EXCLUDED.name
+        INSERT INTO subjects (name)
+        VALUES ($1)
     `
-	_, err := m.db.Exec(ctx, query, subject.SubjectID, subject.Name)
+	_, err := m.db.Exec(ctx, query, subject.Name)
 	return err
 }
 
