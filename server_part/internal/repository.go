@@ -165,7 +165,7 @@ func NewTeacherManager(db *pgxpool.Pool) (*TeacherManager, error) {
 var teachersTableConfig = tableConfig{
 	table:       "teachers",
 	id_name:     "teacher_id",
-	oth_id_name: "department_id",
+	oth_id_name: "subject_id",
 }
 
 func (m *TeacherManager) Insert(ctx context.Context, teac Teacher) error {
