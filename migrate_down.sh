@@ -1,0 +1,1 @@
+~/go/bin/migrate -path migrations -database postgres://iot:iot@localhost:5433/iot_db?sslmode=disable down

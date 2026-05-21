@@ -3,11 +3,13 @@ package domain
 import (
 	"errors"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Lesson struct {
 	ID        int       `json:"id" db:"id"`
-	TeacherID int       `json:"teacher_id" db:"teacher_id"`
+	TeacherID uuid.UUID `json:"teacher_id" db:"teacher_id"`
 	GroupID   int       `json:"group_id" db:"group_id"`
 	SubjectID int       `json:"subject_id" db:"subject_id"`
 	Room      int       `json:"room" db:"room"`
@@ -16,7 +18,7 @@ type Lesson struct {
 
 func NewLesson(
 	ID int,
-	teacherID int,
+	teacherID uuid.UUID,
 	groupID int,
 	subjectID int,
 	room int,
@@ -25,10 +27,6 @@ func NewLesson(
 
 	if ID <= 0 {
 		return nil, errors.New("invalid lesson id")
-	}
-
-	if teacherID <= 0 {
-		return nil, errors.New("invalid teacher id")
 	}
 
 	if groupID <= 0 {

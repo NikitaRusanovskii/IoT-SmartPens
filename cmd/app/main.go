@@ -9,6 +9,7 @@ import (
 	"smartPens/internal/service"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
@@ -39,7 +40,7 @@ func main() {
 	learningService := service.NewLearningService(workRepo, lessonRepo)
 	// 1. Тестирование StartLesson
 	lessonID := 1
-	teacherID := 1
+	teacherID := uuid.New()
 	groupID := 10
 	subjectID := 5
 	room := 301
@@ -58,12 +59,4 @@ func main() {
 		log.Fatalf("CompleteLesson failed: %v", err)
 	}
 	fmt.Println("✓ CompleteLesson executed successfully")
-
-	// 3. Тестирование Delete
-	studentID := 3
-	err = learningService.Delete(ctx, lessonID, studentID)
-	if err != nil {
-		log.Fatalf("Delete failed: %v", err)
-	}
-	fmt.Println("✓ Delete executed successfully")
 }

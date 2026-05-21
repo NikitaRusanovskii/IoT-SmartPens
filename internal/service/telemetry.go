@@ -3,12 +3,15 @@ package service
 import (
 	"math/rand/v2"
 	"smartPens/internal/domain"
+
+	"github.com/google/uuid"
 )
 
 func GenerateDataFromStudentsPen(lessonID int,
 	studentCnt int) ([]domain.Work, error) {
 	works := []domain.Work{}
-	for studentID := range studentCnt {
+	for range studentCnt {
+		studentID := uuid.New()
 		var points domain.PointList
 		startPosition := [3]int8{10, 20, 30}
 		points = append(points, startPosition)

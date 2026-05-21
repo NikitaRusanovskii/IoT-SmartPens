@@ -1,27 +1,27 @@
 package domain
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/google/uuid"
+)
 
 type PointList [][3]int8
 
 type Work struct {
 	LessonID  int
-	StudentID int
+	StudentID uuid.UUID
 	Data      PointList
 }
 
 func NewWork(
 	lessonID int,
-	studentID int,
+	studentID uuid.UUID,
 	data PointList,
 ) (*Work, error) {
 
 	if lessonID <= 0 {
 		return nil, errors.New("invalid lesson id")
-	}
-
-	if studentID <= 0 {
-		return nil, errors.New("invalid student id")
 	}
 
 	return &Work{

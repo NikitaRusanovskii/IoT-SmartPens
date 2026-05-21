@@ -1,6 +1,6 @@
 CREATE TABLE lesson (
     id         SERIAL PRIMARY KEY,
-    teacher_id INTEGER NOT NULL,
+    teacher_id UUID NOT NULL,
     group_id   INTEGER NOT NULL,
     subject_id INTEGER NOT NULL,
     room       INTEGER NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE lesson (
 
 CREATE TABLE work (
     lesson_id  INTEGER NOT NULL,
-    student_id INTEGER NOT NULL,
+    student_id UUID NOT NULL,
     data       JSONB,
     FOREIGN KEY (lesson_id) REFERENCES lesson(id) ON DELETE CASCADE
 );

@@ -6,6 +6,7 @@ import (
 
 	"smartPens/internal/domain"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -52,7 +53,7 @@ func (r *WorkRepository) Create(
 func (r *WorkRepository) GetByLessonAndStudent(
 	ctx context.Context,
 	lessonID int,
-	studentID int,
+	studentID uuid.UUID,
 ) (*domain.Work, error) {
 
 	query := `
@@ -136,7 +137,7 @@ func (r *WorkRepository) GetByLesson(
 func (r *WorkRepository) Delete(
 	ctx context.Context,
 	lessonID int,
-	studentID int,
+	studentID uuid.UUID,
 ) error {
 
 	query := `
