@@ -172,3 +172,43 @@ func (r *LessonRepository) List(
 
 	return lessons, nil
 }
+
+func (r *LessonRepository) CollectWorks(ctx context.Context, lessonID int) (*domain.WorksRequest, error) {
+	query := `
+		SELECT 
+	    l.id, 
+	    l.teacher_id, 
+	    l.date, 
+	    l.group_id, 
+	    l.subject_id, 
+	    l.room,
+	    	COALESCE(
+	    	    json_agg(
+	    	        json_build_object(
+	    	            'student_id', w.student_id,
+	    	            'coords', w.data
+	    	        )
+	    	    ) FILTER (WHERE w.student_id IS NOT NULL), 
+	    	    '[]'
+	    	) as works
+		FROM lesson l
+		LEFT JOIN work w ON l.id = w.lesson_id
+		WHERE l.id = $1
+		GROUP BY l.id;
+	`
+
+	var req domain.WorksRequest
+	err := r.pool.QueryRow(ctx, query, lessonID).Scan(
+		&req.LessonID,
+		&req.TeacherID,
+		&req.Date,
+		&req.GroupID,
+		&req.SubjectID,
+		&req.Room,
+		&req.Works,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &req, nil
+}
