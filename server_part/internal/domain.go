@@ -6,57 +6,99 @@ import (
 	"github.com/google/uuid"
 )
 
-type Role string
+// Student ------------------------------------------------------------------------------------------------------------
 
-// Может быть добавлена роль ученика в будущем для доступа с ограниченными полномочиями
-const (
-	TeacherRole Role = "teacher"
-	//StudentRole Role = "student"
-)
-
-type User struct {
-	UserID         uuid.UUID `db:"user_id"`
-	Role           Role      `db:"role"`
-	IsOnline       bool      `db:"is_online"`
-	AddrPort       string    `db:"addr_port"`
-	ConnectionTime time.Time `db:"connection_time"`
+type Student struct {
+	StudentID  uuid.UUID `db:"student_id"`
+	FirstName  string    `db:"fname"`
+	MiddleName string    `db:"mname"`
+	LastName   string    `db:"lname"`
+	GroupID    int       `db:"group_id"`
 }
 
-func NewUser(Id uuid.UUID, Rl Role, Io bool, Ap string, Ct time.Time) User {
-	return User{Id, Rl, Io, Ap, Ct}
+func NewStudent(Id uuid.UUID, fn string, mn string, ln string, gi int) Student {
+	return Student{Id, fn, mn, ln, gi}
 }
-func (u *User) SetRole(nr Role) {
-	u.Role = nr
+func (s *Student) SetGroup(ng int) {
+	s.GroupID = ng
 }
 
+// --------------------------------------------------------------------------------------------------------------------
+
+// Teacher ------------------------------------------------------------------------------------------------------------
+
+type Teacher struct {
+	StudentID  uuid.UUID `db:"teacher_id"`
+	FirstName  string    `db:"fname"`
+	MiddleName string    `db:"mname"`
+	LastName   string    `db:"lname"`
+	SubjectID  int       `db:"subject_id"`
+}
+
+func NewTeacher(Id uuid.UUID, fn string, mn string, ln string, si int) Teacher {
+	return Teacher{Id, fn, mn, ln, si}
+}
+func (t *Teacher) SetSubject(ns int) {
+	t.SubjectID = ns
+}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// Work ---------------------------------------------------------------------------------------------------------------
+
+type Coords struct {
+	Xcoord   int16
+	Ycoord   int16
+	Pressure int16
+}
 type Work struct {
-	WorkID   int       `db:"work_id"`
-	LessonID int       `db:"lesson_id"`
-	AuthorID uuid.UUID `db:"user_id"`
-	ImageURL string    `db:"image_url"`
+	WorkID    int       `db:"work_id"`
+	LessonID  int       `db:"lesson_id"`
+	StudentID uuid.UUID `db:"student_id" json:"student_id"`
+	Data      []Coords  `db:"data" json:"data"`
+	Mark      int       `db:"mark"`
 }
 
-func NewWork(wi int, li int, ai uuid.UUID, iu string) Work {
-	return Work{wi, li, ai, iu}
+func NewWork(wi int, li int, ai uuid.UUID, d []Coords, m int) Work {
+	return Work{wi, li, ai, d, m}
 }
 func (w *Work) SetLesson(nl int) {
 	w.LessonID = nl
 }
-func (w *Work) SetAuthor(na uuid.UUID) {
-	w.AuthorID = na
+func (w *Work) SetMark(nm int) {
+	w.Mark = nm
 }
-func (w *Work) SetImageURL(niu string) {
-	w.ImageURL = niu
-}
+
+// --------------------------------------------------------------------------------------------------------------------
+
+// Lesson -------------------------------------------------------------------------------------------------------------
 
 type Lesson struct {
-	LessonID  int       `db:"lesson_id"`
-	TeacherID uuid.UUID `db:"user_id"`
+	LessonID  int       `db:"lesson_id" json:"lesson_id"`
+	TeacherID uuid.UUID `db:"teacher_id" json:"teacher_id"`
+	Date      time.Time `db:"date" json:"date"`
+	GroupID   int       `db:"group_id" json:"group_id"`
+	SubjectID int       `db:"subject_id" json:"subject_id"`
+	Room      int       `db:"room" json:"room"`
 }
 
-func NewLesson(li int, ti uuid.UUID) Lesson {
-	return Lesson{li, ti}
+func NewLesson(li int, ti uuid.UUID, d time.Time, gi int, si int, r int) Lesson {
+	return Lesson{li, ti, d, gi, si, r}
 }
 func (l *Lesson) SetTeacher(nti uuid.UUID) {
 	l.TeacherID = nti
 }
+func (l *Lesson) SetDate(nd time.Time) {
+	l.Date = nd
+}
+func (l *Lesson) SetGroup(nsgi int) {
+	l.GroupID = nsgi
+}
+func (l *Lesson) SetSubject(nsgi int) {
+	l.SubjectID = nsgi
+}
+func (l *Lesson) SetRoom(nr int) {
+	l.Room = nr
+}
+
+// --------------------------------------------------------------------------------------------------------------------
