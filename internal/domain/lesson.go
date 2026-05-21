@@ -15,12 +15,17 @@ type Lesson struct {
 }
 
 func NewLesson(
+	ID int,
 	teacherID int,
 	groupID int,
 	subjectID int,
 	room int,
 	date time.Time,
 ) (*Lesson, error) {
+
+	if ID <= 0 {
+		return nil, errors.New("invalid lesson id")
+	}
 
 	if teacherID <= 0 {
 		return nil, errors.New("invalid teacher id")
@@ -43,6 +48,7 @@ func NewLesson(
 	}
 
 	return &Lesson{
+		ID:        ID,
 		TeacherID: teacherID,
 		GroupID:   groupID,
 		SubjectID: subjectID,

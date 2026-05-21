@@ -1,4 +1,4 @@
-package postgres
+package repository
 
 import (
 	"context"
@@ -87,6 +87,50 @@ func (r *WorkRepository) GetByLessonAndStudent(
 	}
 
 	return &work, nil
+}
+
+func (r *WorkRepository) GetByLesson(
+	ctx context.Context,
+	lessonID int,
+) ([]domain.Work, error) {
+
+	query := `
+		SELECT
+			lesson_id,
+			student_id,
+			data
+		FROM works
+		WHERE lesson_id = $1
+	`
+
+	rows, err := r.pool.Query(ctx, query, lessonID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var works []domain.Work
+
+	for rows.Next() {
+		var work domain.Work
+
+		err := rows.Scan(
+			&work.LessonID,
+			&work.StudentID,
+			&work.Data,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		works = append(works, work)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return works, nil
 }
 
 func (r *WorkRepository) Delete(
