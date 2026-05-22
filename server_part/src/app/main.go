@@ -109,30 +109,6 @@ func saveLessonWithWorks(lesson *domain.Lesson, works []domain.Work) error {
 	return nil
 }
 
-func saveTeachersStudents(teachers []domain.Teacher, students []domain.Student) error {
-	ctx := context.Background()
-	for _, teacher := range teachers {
-		if exists, err := subjectService.ExistsByID(ctx, teacher.SubjectID); err != nil || !exists {
-			return err
-		}
-
-		if err := teacherService.Register(ctx, teacher); err != nil && err.Error() != "already registered" {
-			return err
-		}
-	}
-	for _, student := range students {
-		if exists, err := groupService.ExistsByID(ctx, student.GroupID); err != nil || !exists {
-			return err
-		}
-
-		if err := studentService.Register(ctx, student); err != nil && err.Error() != "already registered" {
-			return err
-		}
-	}
-	log.Printf("Saved %d teachers and %d students", len(teachers), len(students))
-	return nil
-}
-
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found")
@@ -168,7 +144,6 @@ func main() {
 	r := gin.Default()
 
 	r.POST("/api/lesson-with-works", httpHandler.CreateLessonWithWorksHandler(saveLessonWithWorks))
-	r.POST("/api/teachers-students", httpHandler.CreateTeachersStudentsHandler(saveTeachersStudents))
 
 	r.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})

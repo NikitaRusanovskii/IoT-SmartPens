@@ -41,32 +41,3 @@ func CreateLessonWithWorksHandler(saveFunc func(*domain.Lesson, []domain.Work) e
 		})
 	}
 }
-
-func CreateTeachersStudentsHandler(
-	saveFunc func([]domain.Teacher, []domain.Student) error,
-) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		teachers, students, err := ParseTeachersStudentsData(c)
-		if err != nil {
-			sendError(c, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		if err := ValidateTeachersStudentsData(teachers, students); err != nil {
-			sendError(c, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		if err := saveFunc(teachers, students); err != nil {
-			sendError(c, http.StatusInternalServerError, err.Error())
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{
-			"status":         "success",
-			"teachers_saved": len(teachers),
-			"students_saved": len(students),
-			"message":        "Teachers and students saved successfully",
-		})
-	}
-}
