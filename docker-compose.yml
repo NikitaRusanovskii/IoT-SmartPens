@@ -1,0 +1,11 @@
+services:
+  postgres_web:
+    image: postgres:16
+    container_name: iot_postgres_web
+    restart: always
+    environment:
+      POSTGRES_USER: iot
+      POSTGRES_PASSWORD: iot
+      POSTGRES_DB: iot_db
+    ports:
+      - "5544:5432"

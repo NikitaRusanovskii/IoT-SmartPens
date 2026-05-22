@@ -53,3 +53,13 @@ CREATE INDEX IF NOT EXISTS idx_works_student_id ON works(student_id);
 CREATE INDEX IF NOT EXISTS idx_student_groups_name ON student_groups(name);
 CREATE INDEX IF NOT EXISTS idx_subjects_name ON subjects(name);
 CREATE INDEX IF NOT EXISTS idx_works_data_gin ON works USING gin (data);
+
+INSERT INTO student_groups (group_id, name) VALUES
+    (1, 'Группа 1')
+ON CONFLICT (group_id) DO NOTHING;
+
+INSERT INTO subjects (subject_id, name) VALUES
+    (1, 'Математика'),
+    (2, 'Физика'),
+    (3, 'Информатика')
+ON CONFLICT (subject_id) DO NOTHING;
