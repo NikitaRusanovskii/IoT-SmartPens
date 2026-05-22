@@ -27,7 +27,7 @@ func NewLessonRepository(pool *pgxpool.Pool) *LessonRepository {
 func (r *LessonRepository) Create(
 	ctx context.Context,
 	lesson *domain.Lesson,
-) error {
+) (int, error) {
 
 	query := `
 		INSERT INTO lesson (
@@ -41,7 +41,8 @@ func (r *LessonRepository) Create(
 		RETURNING id
 	`
 
-	return r.pool.QueryRow(
+	var id int
+	err := r.pool.QueryRow(
 		ctx,
 		query,
 		lesson.TeacherID,
@@ -49,7 +50,14 @@ func (r *LessonRepository) Create(
 		lesson.SubjectID,
 		lesson.Room,
 		lesson.Date,
-	).Scan(&lesson.ID)
+	).Scan(&id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	lesson.ID = id
+	return id, nil
 }
 
 func (r *LessonRepository) GetByID(

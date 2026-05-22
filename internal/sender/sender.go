@@ -1,4 +1,4 @@
-package http
+package sender
 
 import (
 	"bytes"
@@ -12,8 +12,8 @@ import (
 
 type Sender struct {
 	URL    string
-	db     *repository.LessonRepository
-	client *http.Client
+	DB     *repository.LessonRepository
+	Client *http.Client
 }
 
 func (s *Sender) Serialize(wr *domain.WorksRequest) ([]byte, error) {
@@ -34,7 +34,7 @@ func (s *Sender) CreateRequest(jsonData []byte) (*http.Request, error) {
 }
 
 func (s *Sender) SendWorksTo(ctx context.Context, lessonID int) error {
-	wr, err := s.db.CollectWorks(ctx, lessonID)
+	wr, err := s.DB.CollectWorks(ctx, lessonID)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func (s *Sender) SendWorksTo(ctx context.Context, lessonID int) error {
 		return err
 	}
 
-	resp, err := s.client.Do(req)
+	resp, err := s.Client.Do(req)
 	if err != nil {
 		return err
 	}
@@ -58,5 +58,7 @@ func (s *Sender) SendWorksTo(ctx context.Context, lessonID int) error {
 	} else {
 		fmt.Printf("Сервер вернул ошибку, статус: %d\n", resp.StatusCode)
 	}
+
+	return nil
 
 }

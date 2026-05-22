@@ -26,17 +26,17 @@ func (l *LearningService) Delete(ctx context.Context, lessonID int, studentID uu
 }
 
 func (l *LearningService) StartLesson(ctx context.Context,
-	lessonID int, teacherID uuid.UUID, groupID int, subjectID int, room int, date time.Time) error {
-	lesson, err := domain.NewLesson(lessonID, teacherID, groupID, subjectID, room, date)
+	teacherID uuid.UUID, groupID int, subjectID int, room int, date time.Time) (int, error) {
+	lesson, err := domain.NewLesson(teacherID, groupID, subjectID, room, date)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	err = l.lessonDB.Create(ctx, lesson)
+	lessonID, err := l.lessonDB.Create(ctx, lesson)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return lessonID, nil
 }
 
 func (l *LearningService) CompleteLesson(ctx context.Context, lessonID int, studentCnt int) error {
