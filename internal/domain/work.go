@@ -6,18 +6,22 @@ import (
 	"github.com/google/uuid"
 )
 
-type PointList [][3]int8
+type Point struct {
+	X        int8 `json:"x"`
+	Y        int8 `json:"y"`
+	Pressure int8 `json:"pressure"`
+}
 
 type Work struct {
 	LessonID  int
 	StudentID uuid.UUID
-	Data      PointList
+	Data      []Point
 }
 
 func NewWork(
 	lessonID int,
 	studentID uuid.UUID,
-	data PointList,
+	data []Point,
 ) (*Work, error) {
 
 	if lessonID <= 0 {

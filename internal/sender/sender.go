@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"smartPens/internal/domain"
 	"smartPens/internal/repository"
@@ -55,8 +56,9 @@ func (s *Sender) SendWorksTo(ctx context.Context, lessonID int) error {
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		fmt.Println("Запрос успешно отправлен!")
-	} else {
-		fmt.Printf("Сервер вернул ошибку, статус: %d\n", resp.StatusCode)
+	} else if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("server error %d: %s", resp.StatusCode, string(body))
 	}
 
 	return nil
