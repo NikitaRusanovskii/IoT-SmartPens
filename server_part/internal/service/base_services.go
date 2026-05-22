@@ -48,6 +48,14 @@ func (s *BaseUUIDService[T]) Remove(ctx context.Context, id uuid.UUID) error {
 	return s.repo.DeleteByID(ctx, id)
 }
 
+func (s *BaseUUIDService[T]) ExistsByID(ctx context.Context, id uuid.UUID) (bool, error) {
+	return s.repo.ExistsByID(ctx, id)
+}
+
+func (s *BaseUUIDService[T]) GetByID(ctx context.Context, id uuid.UUID) (*T, error) {
+	return s.repo.GetByID(ctx, id)
+}
+
 // --------------------------------------------------------------------------------------------------------------------
 
 // IntService ---------------------------------------------------------------------------------------------------------
@@ -89,6 +97,14 @@ func (s *BaseIntService[T]) UpdateField(ctx context.Context, id int, updater fun
 
 func (s *BaseIntService[T]) Remove(ctx context.Context, id int) error {
 	return s.repo.DeleteByID(ctx, id)
+}
+
+func (s *BaseIntService[T]) ExistsByID(ctx context.Context, id int) (bool, error) {
+	return s.repo.ExistsByID(ctx, id)
+}
+
+func (s *BaseIntService[T]) GetByID(ctx context.Context, id int) (*T, error) {
+	return s.repo.GetByID(ctx, id)
 }
 
 // --------------------------------------------------------------------------------------------------------------------

@@ -7,9 +7,9 @@ import (
 // Student ------------------------------------------------------------------------------------------------------------
 
 type Student struct {
-	StudentID uuid.UUID `db:"student_id"`
-	FIO       Fio
-	GroupID   int `db:"group_id"`
+	StudentID uuid.UUID `db:"student_id" json:"student_id"`
+	FIO       Fio       `json:"fio"`
+	GroupID   int       `db:"group_id" json:"group_id"`
 }
 
 func NewStudent(Id uuid.UUID, fn string, mn string, ln string, gi int) Student {

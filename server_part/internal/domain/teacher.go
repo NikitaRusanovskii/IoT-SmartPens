@@ -5,9 +5,9 @@ import "github.com/google/uuid"
 // Teacher ------------------------------------------------------------------------------------------------------------
 
 type Teacher struct {
-	TeacherID uuid.UUID `db:"teacher_id"`
-	FIO       Fio
-	SubjectID int `db:"subject_id"`
+	TeacherID uuid.UUID `db:"teacher_id" json:"teacher_id"`
+	FIO       Fio       `json:"fio"`
+	SubjectID int       `db:"subject_id" json:"subject_id"`
 }
 
 func NewTeacher(Id uuid.UUID, fn string, mn string, ln string, si int) Teacher {

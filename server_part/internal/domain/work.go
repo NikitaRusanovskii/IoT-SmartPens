@@ -5,16 +5,17 @@ import "github.com/google/uuid"
 // Work ---------------------------------------------------------------------------------------------------------------
 
 type Coords struct {
-	Xcoord   int16
-	Ycoord   int16
-	Pressure int16
+	Xcoord   int16 `json:"Xcoord"`
+	Ycoord   int16 `json:"Ycoord"`
+	Pressure int16 `json:"Pressure"`
 }
+
 type Work struct {
-	WorkID    int       `db:"work_id"`
-	LessonID  int       `db:"lesson_id"`
+	WorkID    int       `db:"work_id" json:"work_id"`
+	LessonID  int       `db:"lesson_id" json:"lesson_id"`
 	StudentID uuid.UUID `db:"student_id" json:"student_id"`
 	Data      []Coords  `db:"data" json:"data"`
-	Mark      int       `db:"mark"`
+	Mark      int       `db:"mark" json:"mark"`
 }
 
 func NewWork(wi int, li int, ai uuid.UUID, d []Coords, m int) Work {
