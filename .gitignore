@@ -1,2 +1,3 @@
 /migrations/cmds.txt
 /.env
+/server_part/src/app/*.env
