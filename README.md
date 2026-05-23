@@ -27,6 +27,7 @@ IoT-SmartPens
 &nbsp;Frontend:  
 &nbsp;- HTML  
 &nbsp;- Photoshop
+&nbsp;- CSS
 
 Примечание: [данный файл](https://github.com/NikitaRusanovskii/IoT-SmartPens/blob/app/.env) был добавлен в репозиторий в учебных целях.
 
