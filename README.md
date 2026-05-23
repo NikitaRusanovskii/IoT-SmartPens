@@ -32,8 +32,8 @@ IoT-SmartPens
 
 Авторы проекта
 -------
-- [Казанцев Михаил]()
+- [Казанцев Михаил](https://github.com/IamYarr)
 - [Русановский Никита](https://github.com/NikitaRusanovskii)
-- [Серова Екатерина]()
+- [Серова Екатерина](https://github.com/idexts)
 - [Симонов Максим](https://github.com/UuAcC)
 - [Стрельченко Софья](https://github.com/StrelchenkoSofya)
