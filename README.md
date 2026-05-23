@@ -34,6 +34,6 @@ IoT-SmartPens
 -------
 - [Казанцев Михаил](https://github.com/IamYarr)
 - [Русановский Никита](https://github.com/NikitaRusanovskii)
-- [Серова Екатерина](https://github.com/idexts)
+- [Серова Екатерина](https://github.com/idexsts)
 - [Симонов Максим](https://github.com/UuAcC)
 - [Стрельченко Софья](https://github.com/StrelchenkoSofya)
