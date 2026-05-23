@@ -13,7 +13,7 @@ IoT-SmartPens
 ---------------
 Учебный проект был создан в рамках курса "Интернет вещей" и представляет из себя описание работы системы класса с умными ручками и реализацию учебного прототипа такой системы.
 
-Концепт идеи описан в [презентации]().
+Концепт идеи описан в [презентации](https://github.com/NikitaRusanovskii/IoT-SmartPens/blob/main/presentation/Smart_Lesson_System_3824%D0%911%D0%9F%D0%A01.pptx).
 
 При разработке использовались инструменты:  
 &nbsp;Backend:  
@@ -26,7 +26,7 @@ IoT-SmartPens
 &nbsp;- golang-migrate  
 &nbsp;Frontend:  
 &nbsp;- HTML  
-&nbsp;- CSS
+&nbsp;- Photoshop
 
 Примечание: [данный файл](https://github.com/NikitaRusanovskii/IoT-SmartPens/blob/app/.env) был добавлен в репозиторий в учебных целях.
 
